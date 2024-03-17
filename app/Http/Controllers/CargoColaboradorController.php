@@ -19,9 +19,7 @@ class CargoColaboradorController extends Controller
      */
     public function index()
     {
-        $cargocolaborador = $this->cargocolaborador->with('colaboradorID')->get();
-
-        return response()->json($cargocolaborador);
+       //
 
     }
 /*
@@ -42,7 +40,17 @@ class CargoColaboradorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         // Validação dos dados
+    $request->validate($this->cargocolaborador->rules(), $this->cargocolaborador->feedback());
+
+    // Criação do cargo colaborador
+    $cargoColaborador = new CargoColaborador();
+    $cargoColaborador->cargo_id = $request->cargo_id;
+    $cargoColaborador->colaborador_id = $request->colaborador_id;
+    $cargoColaborador->nota_desempenho = $request->nota_desempenho;
+    $cargoColaborador->save();
+    
+    return response()->json($cargoColaborador, 201);
     }
 
     /**
@@ -76,8 +84,22 @@ class CargoColaboradorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Encontre o modelo com base no ID fornecido
+        $cargoColaborador = $this->cargocolaborador->find($id);
+    
+        if ($cargoColaborador === null) {
+            return response()->json(['erro' => 'Impossível realizar a atualização. O recurso solicitado não existe'], 404);
+        }
+    
+        // Valide os dados da solicitação
+        $request->validate($this->cargocolaborador->rules(), $this->cargocolaborador->feedback());
+    
+        $cargoColaborador->fill($request->all());
+        $cargoColaborador->save();
+        
+        return response()->json($cargoColaborador, 200);
     }
+    
 
     /**
      * Remove the specified resource from storage.

@@ -32,13 +32,7 @@ class UnidadeController extends Controller
      */
     public function create()
     {
-        $request->validate($this->unidade->rules());
-
-        $unidade = $this->unidade->create([
-            'nome' => $request->nome
-        ]);
-
-        return response()->json($unidade, 201);
+      ///
     }
 
     /**
@@ -49,7 +43,16 @@ class UnidadeController extends Controller
      */
     public function store(Request $request)
     {
+        //validação dos dados e criação de nova unidade
+        $request->validate($this->unidade->rules(), $this->unidade->feedback());
+
+        $unidade = new Unidade();
+        $unidade->nome_fantasia = $request->nome_fantasia;
+        $unidade->razao_social = $request->razao_social;
+        $unidade->cnpj = $request->cnpj;
+        $unidade->save();
         
+        return response()->json($unidade, 201);
     }
 
     /**

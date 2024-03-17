@@ -1,0 +1,36 @@
+:root{
+    --white-color: #FFF;
+    --black-color: #000;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	outline: none;
+	text-decoration: none;
+	box-sizing: border-box;
+}
+
+ul {
+	list-style: none;
+}
+
+.menu {
+    display: inline-block;
+    position: relative;
+    margin-top: 0px;
+    width: 100%;
+    background-color: var(--black-color) ;
+}
+
+
+
+.menu ul li {
+    color: var(--white-color);
+    display: inline-block;
+    position: relative;
+}
+
+.menu ul li a {
+    text-decoration: none;
+}

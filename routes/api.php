@@ -23,3 +23,5 @@ Route::apiResource('colaborador', 'App\Http\Controllers\ColaboradorController');
 Route::apiResource('unidade', 'App\Http\Controllers\UnidadeController');
 
 
+
+

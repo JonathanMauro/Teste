@@ -16,7 +16,7 @@ class CargoSeeder extends Seeder
     public function run()
     {
 
-        $cargos = ['Cargo1', 'Cargo2', 'Cargo3', 'Cargo4', 'Cargo5', 'Cargo6', 'Cargo7', 'Cargo8', 'Cargo9', 'Cargo10']; // lista de cargos únicos
+        $cargos = ['Porteiro(a)', 'Zelador(a)', 'Gerente', 'Promotor(a)', 'Psicologo(a)', 'Recepcionista', 'Segurança', 'Vendedor(a)', 'Motorista', 'Despachante']; // lista de cargos únicos
 
         // Iterar sobre cada cargo na lista
         foreach ($cargos as $cargo) {

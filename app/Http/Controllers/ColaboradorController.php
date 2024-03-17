@@ -40,8 +40,35 @@ class ColaboradorController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        
+    {/*
+   //validação dos dados e criação de nova unidade
+     $request->validate($this->colaborador->rules(), $this->colaborador->feedback());
+
+     // Criação do colaborador
+     $colaborador = $this->colaborador->create([
+         'unidade_id' => $request->unidade_id,
+         'nome' => $request->nome, 
+         'cpf' => $request->cpf,
+         'email' => $request->email,
+     ]);
+    
+     return response()->json($colaborador, 201);
+*/
+
+ // Validação dos dados
+ $validatedData = $request->validate([
+    'unidade_id' => 'required|exists:unidades,id',
+    'nome' => 'required',
+    'cpf' => 'required|unique:colaboradores',
+    'email' => 'required|unique:colaboradores'
+]);
+
+// Cria um novo colaborador com os dados validados
+$colaborador = Colaborador::create($validatedData);
+
+// Retorna o colaborador criado
+return response()->json($colaborador, 201);
+       
     }
 
     /**

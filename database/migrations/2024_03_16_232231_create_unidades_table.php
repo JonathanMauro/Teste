@@ -14,12 +14,12 @@ class CreateUnidadesTable extends Migration
     public function up()
     {
         Schema::create('unidades', function (Blueprint $table) {
-                $table->id();
-                $table->string('nome_fantasia');
-                $table->string('razao_social');
-                $table->string('cnpj')->unique();
-                $table->timestamps();
-        });
+            $table->id();
+            $table->string('nome_fantasia');
+            $table->string('razao_social');
+            $table->string('cnpj')->unique();
+            $table->timestamps();
+    });
     }
 
     /**
