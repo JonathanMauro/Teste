@@ -21,6 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::apiResource('cargocolaborador', 'App\Http\Controllers\CargoColaboradorController');
 Route::apiResource('colaborador', 'App\Http\Controllers\ColaboradorController');
 Route::apiResource('unidade', 'App\Http\Controllers\UnidadeController');
+Route::apiResource('ranking', 'App\Http\Controllers\RankingController');
 
 
 

@@ -16,7 +16,7 @@ class CargoColaboradorSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             CargoColaborador::create([
                 'id' => $i,
                 'cargo_id' => random_int(1, 10),

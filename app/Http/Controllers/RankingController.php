@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Colaborador;
 use Illuminate\Http\Request;
+use App\Models\Colaborador;
 
-class ColaboradorController extends Controller
+class RankingController extends Controller
 {
-    public function __construct(Colaborador $colaborador)
-    {
+
+    public function __construct(Colaborador $colaborador){
         $this->colaborador = $colaborador;
     }
     /**
@@ -18,10 +18,23 @@ class ColaboradorController extends Controller
      */
     public function index()
     {
-        $consulta = Colaborador::with('notasDesempenho')->paginate(10);
-
-        return response()->json($consulta);
+        // Busca todos os colaboradores com suas notas de desempenho
+        $colaboradores = $this->colaborador->with('notasDesempenho')->get();
+    
+        // Calcula a soma das notas de desempenho para cada colaborador
+        $colaboradoresComSoma = $colaboradores->map(function ($colaborador) {
+            $somaNotas = $colaborador->notasDesempenho->sum('nota_desempenho');
+            $colaborador->somaNotasDesempenho = $somaNotas;
+            return $colaborador;
+        });
+    
+        // Ordena os colaboradores com base na soma das notas de desempenho
+        $ranking = $colaboradoresComSoma->sortByDesc('somaNotasDesempenho');
+    
+        return response()->json($ranking);
     }
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,35 +53,8 @@ class ColaboradorController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {/*
-   //validação dos dados e criação de nova unidade
-     $request->validate($this->colaborador->rules(), $this->colaborador->feedback());
-
-     // Criação do colaborador
-     $colaborador = $this->colaborador->create([
-         'unidade_id' => $request->unidade_id,
-         'nome' => $request->nome, 
-         'cpf' => $request->cpf,
-         'email' => $request->email,
-     ]);
-    
-     return response()->json($colaborador, 201);
-*/
-
- // Validação dos dados
- $validatedData = $request->validate([
-    'unidade_id' => 'required|exists:unidades,id',
-    'nome' => 'required',
-    'cpf' => 'required|unique:colaboradores',
-    'email' => 'required|unique:colaboradores'
-]);
-
-// Cria um novo colaborador com os dados validados
-$colaborador = Colaborador::create($validatedData);
-
-// Retorna o colaborador criado
-return response()->json($colaborador, 201);
-       
+    {
+        //
     }
 
     /**

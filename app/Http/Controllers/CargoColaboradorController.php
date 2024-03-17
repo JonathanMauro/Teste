@@ -19,7 +19,7 @@ class CargoColaboradorController extends Controller
      */
     public function index()
     {
-       //
+      ///
 
     }
 /*
