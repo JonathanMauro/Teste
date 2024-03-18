@@ -19,9 +19,10 @@ class UnidadeController extends Controller
      */
     public function index()
     {
-         // Carrega os relacionamentos Colaborador e CargoColaborador
-         $geral = $this->unidade->with('colaboradores')->get();
+         // Recupera os dados paginados das unidades com os colaboradores carregados
+         $geral = Unidade::with('colaboradores')->paginate(10);
 
+         // Retorna uma resposta JSON com os dados paginados
          return response()->json($geral);
     }
 

@@ -19,7 +19,9 @@ class CargoColaboradorController extends Controller
      */
     public function index()
     {
-      ///
+      $consulta = $this->cargocolaborador->get();
+
+      return response()->json($consulta);
 
     }
 /*
@@ -39,11 +41,21 @@ class CargoColaboradorController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-         // Validação dos dados
+{
+    // Validação dos dados
     $request->validate($this->cargocolaborador->rules(), $this->cargocolaborador->feedback());
 
-    // Criação do cargo colaborador
+    // Verificar se já existe um registro com os mesmos valores de cargo_id e colaborador_id
+    $existingCargoColaborador = CargoColaborador::where('cargo_id', $request->cargo_id)
+                                                ->where('colaborador_id', $request->colaborador_id)
+                                                ->first();
+
+    if ($existingCargoColaborador) {
+        // Se o registro já existe, você pode optar por retornar uma resposta de erro
+        return response()->json(['message' => 'Este registro já existe.'], 400);
+    }
+
+    // Se o registro não existir, crie um novo
     $cargoColaborador = new CargoColaborador();
     $cargoColaborador->cargo_id = $request->cargo_id;
     $cargoColaborador->colaborador_id = $request->colaborador_id;
@@ -51,7 +63,8 @@ class CargoColaboradorController extends Controller
     $cargoColaborador->save();
     
     return response()->json($cargoColaborador, 201);
-    }
+}
+
 
     /**
      * Display the specified resource.
@@ -85,20 +98,33 @@ class CargoColaboradorController extends Controller
     public function update(Request $request, $id)
     {
         // Encontre o modelo com base no ID fornecido
-        $cargoColaborador = $this->cargocolaborador->find($id);
+        $ranking = $this->cargocolaborador->find($id);
     
-        if ($cargoColaborador === null) {
-            return response()->json(['erro' => 'Impossível realizar a atualização. O recurso solicitado não existe'], 404);
+        // Se o modelo não for encontrado, retorne uma resposta de erro
+        if (!$ranking) {
+            return response()->json(['error' => 'Model not found'], 404);
         }
     
-        // Valide os dados da solicitação
-        $request->validate($this->cargocolaborador->rules(), $this->cargocolaborador->feedback());
-    
-        $cargoColaborador->fill($request->all());
-        $cargoColaborador->save();
+        // Atualize os campos com base nos dados recebidos do formulário, se estiverem presentes no request
+        if ($request->has('cargo_id')) {
+            $ranking->cargo_id = $request->cargo_id;
+        } 
+         
+        if ($request->has('colaborador_id')) {
+            $ranking->colaborador_id = $request->colaborador_id;
+        }
         
-        return response()->json($cargoColaborador, 200);
+        if ($request->has('nota_desempenho')) {
+            $ranking->nota_desempenho = $request->nota_desempenho;
+        }
+    
+        // Salve as alterações
+        $ranking->save();
+        dd($ranking->all());
+        // Retorne uma resposta JSON com o modelo atualizado
+        return response()->json($ranking, 200);
     }
+    
     
 
     /**

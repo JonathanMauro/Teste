@@ -1,66 +1,19 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Controle</title>
-    <link rel="shortcut icon" href="{{ asset('img/controlo-remoto.png') }}" type="image/x-icon">
-
-    {{-- Fonts --}}
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    {{-- CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    {{-- BOOTSTRAP --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    {{-- JS --}}
-    <script src="{{ asset('js/scripts.js') }}" defer></script>
-    {{-- BOXICONS --}}
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <meta name="csrf-token"> 
-</head>
-
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">Controle</a>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Relatório</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/total">Total</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/ranking">Ranking</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+@extends('layouts.app')
+@section('content')
     <div class="container">
         <div class="topo">
-            <span>Cadastro de Funcionários</span>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new">Incluir Funcionário</button>
+            <span>Total de Colaboradores por Unidade</span>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new">Incluir Unidade</button>
         </div>
 
         <div class="divTable">
             <table>
                 <thead>
                     <tr>
-                        <th class="text-center">Nome</th>
-                        <th class="text-center">CPF</th>
-                        <th class="text-center">E-mail</th>
-                        <th class="text-center">Unidade</th>
-                        <th class="text-center">Cargo</th>
-                      
+                        <th class="text-center"> Nome </th>
+                        <th class="text-center">Razão Social</th>
+                        <th class="text-center">CNPJ</th>
+                        <th class="text-center">Total de Colaboradores</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,20 +42,18 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Adicionar Funcionário</h5>
+                        <h5 class="modal-title">Adicionar Unidade</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form action="">
                             @csrf
-                            <label for="nome">Nome</label>
-                            <input type="text" id="nome" required>
-                            <label for="cpf">CPF</label>
-                            <input type="number" id="cpf">
-                            <label for="email">E-mail</label>
-                            <input type="email" id="email">
-                            <label for="unidade_id">Unidade ID</label>
-                            <input type="number" id="unidade_id">
+                            <label for="nome_fantasia">Nome Fantasia</label>
+                            <input type="text" id="nome_fantasia" required>
+                            <label for="razao_social">Razão Social</label>
+                            <input type="text" id="razao_social">
+                            <label for="cnpj">CNPJ</label>
+                            <input type="number" id="cnpj">
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -113,24 +64,19 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script>
+
     <script>
         let currentPage = 1;
         let totalPages = 0;
-        const cargos = ['Porteiro(a)', 'Zelador(a)', 'Gerente', 'Promotor(a)', 'Psicologo(a)', 'Recepcionista', 'Segurança',
-            'Vendedor(a)', 'Motorista', 'Despachante'
-        ];
-        let nomeCargo = '';
+        let quantidade = 0;
+     
 
         function fetchPage(page) {
-            fetch(`api/colaborador?page=${page}`)
+            fetch(`api/unidade?page=${page}`)
                 .then(response => response.json())
                 .then(data => {
                     const tableBody = document.querySelector('.divTable tbody');
                     tableBody.innerHTML = '';
-
                     currentPage = page;
                     totalPages = data.last_page;
 
@@ -138,27 +84,25 @@
                     updatePagination();
 
                     // Itera sobre os dados recebidos e cria linhas na tabela para cada colaborador
-                    data.data.forEach(colaborador => {
+                   data.data.forEach(unidade => {
+                       
+
+                       if (unidade.colaboradores.length > 0){
+                        quantidade = unidade.colaboradores.length;
+                       } else {
+                        quantidade = 0;
+                       }
+                        // Cria uma nova linha da tabela
                         const row = document.createElement('tr');
 
-                        if (Array.isArray(colaborador.notas_desempenho) && colaborador.notas_desempenho.length >
-                            0) {
-                            // Se tiver pelo menos um elemento, acessa o cargo_id do primeiro elemento
-                           nomeCargo = cargos[colaborador.notas_desempenho[0].cargo_id - 1] 
-                        } else {
-                            // Se não for um array ou se for um array vazio, exibe uma mensagem de erro ou trata conforme necessário
-                            nomeCargo = 'Não possui'
-                        }
-
-
-
+                        // Define os valores para cada coluna da tabela
                         row.innerHTML = `
-                            <td class="text-center">${colaborador.nome}</td>
-                            <td class="text-center">${colaborador.cpf}</td>
-                            <td class="text-center">${colaborador.email}</td>
-                            <td class="text-center">${colaborador.unidade_id}</td>
-                            <td class="text-center">${nomeCargo}</td>
-                        `;
+                        <td class="text-center">${unidade.nome_fantasia}</td>
+                        <td class="text-center">${unidade.razao_social}</td>
+                        <td class="text-center">${unidade.cnpj}</td>
+                        <td class="text-center">${quantidade}</td>
+                 
+                    `;
                         tableBody.appendChild(row);
                     });
                 })
@@ -231,25 +175,24 @@
         fetchPage(1);
 
 
-                  //envio de dados ao backend
+           //envio de dados ao backend
 document.getElementById('btnSalvar').addEventListener('click', function() {
     // Captura os valores dos campos do formulário
-    const nome = document.getElementById('nome').value;
-    const unidade_id = document.getElementById('unidade_id').value;
-    const email = document.getElementById('email').value;
-    const cpf = document.getElementById('cpf').value;
+    const nome_fantasia = document.getElementById('nome_fantasia').value;
+    const razao_social = document.getElementById('razao_social').value;
+    const cnpj = document.getElementById('cnpj').value;
     
 
     // Constrói o objeto de dados a ser enviado para o backend
     const data = {
-        nome: nome,
-        unidade_id: unidade_id,
-        email: email,
-        cpf: cpf
+        nome_fantasia: nome_fantasia,
+        razao_social: razao_social,
+        cnpj: cnpj,
+    
     };
 
     // Envia os dados para o backend usando uma solicitação HTTP POST
-    fetch('api/colaborador', {
+    fetch('api/unidade', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -272,6 +215,4 @@ document.getElementById('btnSalvar').addEventListener('click', function() {
     });
 });
     </script>
-</body>
-
-</html>
+@endsection

@@ -18,20 +18,20 @@ class RankingController extends Controller
      */
     public function index()
     {
-        // Busca todos os colaboradores com suas notas de desempenho
-        $colaboradores = $this->colaborador->with('notasDesempenho')->get();
+       // Busca todos os colaboradores
+       $colaboradores = Colaborador::with('notasDesempenho')->get();
+
+       // Calcula a soma das notas de desempenho para cada colaborador
+       $colaboradoresComSoma = $colaboradores->map(function ($colaborador) {
+           $somaNotas = $colaborador->notasDesempenho->sum('nota_desempenho');
+           $colaborador->somaNotasDesempenho = $somaNotas;
+           return $colaborador;
+       });
+
+       // Ordena os colaboradores em ordem decrescente com base na soma das notas de desempenho
+       $colaboradoresOrdenados = $colaboradoresComSoma->sortByDesc('somaNotasDesempenho');
     
-        // Calcula a soma das notas de desempenho para cada colaborador
-        $colaboradoresComSoma = $colaboradores->map(function ($colaborador) {
-            $somaNotas = $colaborador->notasDesempenho->sum('nota_desempenho');
-            $colaborador->somaNotasDesempenho = $somaNotas;
-            return $colaborador;
-        });
-    
-        // Ordena os colaboradores com base na soma das notas de desempenho
-        $ranking = $colaboradoresComSoma->sortByDesc('somaNotasDesempenho');
-    
-        return response()->json($ranking);
+        return response()->json($colaboradoresOrdenados);
     }
     
 

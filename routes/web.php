@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CargoColaboradorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,6 @@ Route::get('/ranking', function() {
 Route::get('/total', function() {
     return view('total');
 });
+
+Route::post('/cargocolaborador', [CargoColaboradorController::class, 'store'])->name('cargocolaborador.store');
 
