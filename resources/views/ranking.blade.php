@@ -51,39 +51,19 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalEditarLabel">Editar Dados</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <label for="modalCargoID">Cargo ID</label>
-                            <input type="text" id="modalCargoID" class="form-control">
-                            <label for="modalColaboradorID">Colaborador ID</label>
-                            <input type="text" id="modalColaboradorID" class="form-control">
-                            <label for="modalNotaDesempenho">Nota Desempenho</label>
-                            <input type="text" id="modalNotaDesempenho" class="form-control">
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="button" class="btn btn-primary" id="btnSalvarEdicao">Salvar Mudanças</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      
+       
     </div>
 
     <script>
         let currentPage = 1;
         let totalPages = 0;
+        let editIcons = [];
         const cargos = ['Porteiro(a)', 'Zelador(a)', 'Gerente', 'Promotor(a)', 'Psicologo(a)', 'Recepcionista', 'Segurança',
             'Vendedor(a)', 'Motorista', 'Despachante'
         ];
         let nomeCargo = '';
+        let id = '';
     
 
 
@@ -112,20 +92,28 @@
                             // Se não for um array ou se for um array vazio, exibe uma mensagem de erro ou trata conforme necessário
                             nomeCargo = 'Não possui'
                         }
+
+                    
                 
                 // Cria uma nova linha da tabela
                 const row = document.createElement('tr');
 
                 // Define os valores para cada coluna da tabela
-                row.innerHTML = `
-                    <td class="text-center">${ranking.nome}</td>
-                    <td class="text-center">${ranking.cpf}</td>
-                    <td class="text-center">${ranking.email}</td>
-                    <td class="text-center">${ranking.unidade_id}</td>
-                    <td class="text-center">${nomeCargo}</td>
-                    <td class="text-center">${ranking.somaNotasDesempenho}</td>
-                    <td class="text-center blue-color"><a href="#" class="edit-icon" data-bs-toggle="modal" data-bs-target="#modalEditar"><i class='bx bx-edit'></i></a></td>
-                `;
+          row.innerHTML = `
+    <td class="text-center">${ranking.nome}</td>
+    <td class="text-center">${ranking.cpf}</td>
+    <td class="text-center">${ranking.email}</td>
+    <td class="text-center">${ranking.unidade_id}</td>
+    <td class="text-center">${nomeCargo}</td>
+    <td class="text-center">${ranking.somaNotasDesempenho}</td>
+    <td class="text-center blue-color">
+        <a href="/edit/${ranking.id}" class="edit-icon" title="Editar">
+            <i class='bx bx-edit'></i>
+        </a>
+    </td>
+`;
+
+
                 tableBody.appendChild(row);
             });
         })
@@ -191,43 +179,7 @@ function fecharModal() {
     window.location.reload();
 }
 
-// Seleciona todos os ícones de edição
-const editIcons = document.querySelectorAll('.edit-icon');
 
-// Adiciona um evento de clique a cada ícone de edição
-editIcons.forEach(icon => {
-    icon.addEventListener('click', function(event) {
-        event.preventDefault(); // Evita o comportamento padrão do link
 
-        // Captura os dados da linha correspondente
-        const rowData = this.closest('tr').querySelectorAll('td');
-
-        // Extrai os dados necessários da linha
-        const cargo_id = ranking.cargo_id; // 
-        const colaborador_id = ranking.unidade_id; 
-        const nota_desempenho = ranking.notas_desempenho[0]; 
-        abrirModal(cargo_id, colaborador_id, nota_desempenho); 
-    });
-});
-
-document.getElementById('btnSalvarEdicao').addEventListener('click', function() {
-    // Aqui você pode acessar os valores dos campos de entrada e enviar os dados para o backend para atualização
-    const cargo_id = document.getElementById('modalCargoID').value;
-    const colaborador_id = document.getElementById('modalColaboradorID').value;
-    const nota_desempenho = document.getElementById('modalNotaDesempenho').value;
-
-    // Envie os dados para o backend e lide com a atualização
-});
-
-function abrirModal(cargo_id, colaborador_id, nota_desempenho) {
-    // Abre o modal de edição
-    const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
-    modal.show();
-  
-    // Preenche os campos do modal com os dados capturados
-    document.getElementById('modalCargoID').value = cargo_id;
-    document.getElementById('modalColaboradorID').value = colaborador_id;
-    document.getElementById('modalNotaDesempenho').value = nota_desempenho;
-}
     </script>
 @endsection

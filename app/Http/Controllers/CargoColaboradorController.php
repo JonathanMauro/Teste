@@ -74,7 +74,10 @@ class CargoColaboradorController extends Controller
      */
     public function show($id)
     {
-        //
+        
+            $colaborador = CargoColaborador::findOrFail($id);
+            return response()->json($colaborador);
+        
     }
 
     /**
@@ -97,32 +100,20 @@ class CargoColaboradorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Encontre o modelo com base no ID fornecido
-        $ranking = $this->cargocolaborador->find($id);
-    
-        // Se o modelo não for encontrado, retorne uma resposta de erro
-        if (!$ranking) {
-            return response()->json(['error' => 'Model not found'], 404);
-        }
-    
-        // Atualize os campos com base nos dados recebidos do formulário, se estiverem presentes no request
-        if ($request->has('cargo_id')) {
-            $ranking->cargo_id = $request->cargo_id;
-        } 
-         
-        if ($request->has('colaborador_id')) {
-            $ranking->colaborador_id = $request->colaborador_id;
-        }
-        
-        if ($request->has('nota_desempenho')) {
-            $ranking->nota_desempenho = $request->nota_desempenho;
-        }
-    
-        // Salve as alterações
-        $ranking->save();
-        dd($ranking->all());
-        // Retorne uma resposta JSON com o modelo atualizado
-        return response()->json($ranking, 200);
+       // Encontre o recurso com base no ID fornecido
+       $cargoColaborador = CargoColaborador::find($id);
+
+       // Verifique se o recurso foi encontrado
+       if (!$cargoColaborador) {
+           // Se o recurso não for encontrado, retorne uma resposta 404 (Recurso não encontrado)
+           return response()->json(['message' => 'Recurso não encontrado'], 404);
+       }
+
+       // Atualize os atributos do recurso com base nos dados fornecidos na requisição
+       $cargoColaborador->update($request->only(['cargo_id', 'colaborador_id', 'nota_desempenho']));
+
+       // Retorne uma resposta 200 (OK) para indicar que a atualização foi bem-sucedida
+       return response()->json(['message' => 'Recurso atualizado com sucesso'], 200);
     }
     
     

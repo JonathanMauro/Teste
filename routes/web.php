@@ -27,5 +27,12 @@ Route::get('/total', function() {
     return view('total');
 });
 
-Route::post('/cargocolaborador', [CargoColaboradorController::class, 'store'])->name('cargocolaborador.store');
+Route::get('/edit/{id}', function() {
+    return view('edit');
+})->name('edit');
+
+
+
+
+
 

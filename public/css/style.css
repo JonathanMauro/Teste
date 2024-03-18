@@ -148,6 +148,24 @@ tbody tr td.acao {
     display: none;
 }
 
+.container form {
+    display:flex;
+    align-items: center; 
+}
+
+.container form .form-group{
+    margin-top: 10px;
+}
+
+.container form input {
+    width: 200px;
+}
+
+.container form button{
+    margin-top: 20px;
+    width: 100px;
+}
+
 @media (max-width: 700px) {
     body {
         font-size: 10px;
